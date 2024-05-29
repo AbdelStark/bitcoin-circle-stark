@@ -1,49 +1,29 @@
-name: Bitcoin Circle Stark Book
+name: Bitcoin Circle STARK Book
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: write
 
 jobs:
-  book:
+  deploy:
     runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - uses: actions/checkout@v2
 
-      - name: Check for changes in the book directory
-        id: check_changes
-        run: |
-          if git diff --quiet --exit-code HEAD^ HEAD -- book; then
-            echo "No changes in the 'book' directory. Exiting..."
-            exit 0
-          else
-            echo "Changes detected in the book directory. Continuing..."
-          fi
-        continue-on-error: true
-
       - name: Setup mdBook
-        if: steps.check_changes.outcome == 'success'
         uses: peaceiris/actions-mdbook@v1
         with:
-          mdbook-version: "latest"
+          mdbook-version: "0.4.10"
 
-      - name: Build mdBook
-        if: steps.check_changes.outcome == 'success'
-        run: mdbook build
-        working-directory: ./book
+      - run: mdbook build
 
       - name: Deploy
-        if: ${{ github.ref == 'refs/heads/main' }} && steps.check_changes.outcome == 'success'
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./book/book
