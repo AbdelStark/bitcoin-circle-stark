@@ -10,6 +10,8 @@ on:
 
 jobs:
   book:
+    permissions:
+      contents: write
     runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
