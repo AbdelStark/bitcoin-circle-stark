@@ -1,0 +1,11 @@
+set -e
+
+echo '+cargo clean'
+cargo clean
+echo '+cargo test -- --nocapture'
+cargo test -- --nocapture
+echo '+cargo clippy --all --all-features --all-targets -- -D warnings'
+cargo clippy --all --all-features --all-targets -- -D warnings
+echo '+cargo +nightly fmt --all -- --check'
+cargo +nightly fmt --all -- --check
+
